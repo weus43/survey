@@ -941,30 +941,48 @@ function renderResults() {
   if (active.length) {
     html += `<div class="section-label">📊 진행 중인 설문 (중간 통계)</div>`;
     html += active.map(s => `
-      <div class="survey-card" onclick="openPwModal('${s.id}')">
-        <div class="survey-card-title">${esc(s.title)}</div>
-        ${s.description ? `<div class="survey-card-desc">${esc(s.description)}</div>` : ''}
-        <div class="survey-card-meta">
-          <span class="tag tag-green">진행중</span>
-          <span class="tag tag-gray">📅 ~${fmtDate(s.endDate)}</span>
-          <span class="tag tag-gray">👥 ${(s.responses||[]).length}명</span>
-          <span class="tag tag-primary">🔐 비밀번호 필요</span>
-        </div>
-      </div>`).join('');
+  <div class="survey-card-wrap">
+    <div class="survey-card" onclick="openPwModal('${s.id}')">
+      <div class="survey-card-title">${esc(s.title)}</div>
+      ${s.description ? `<div class="survey-card-desc">${esc(s.description)}</div>` : ''}
+      <div class="survey-card-meta">
+        <span class="tag tag-green">진행중</span>
+        <span class="tag tag-gray">📅 ~${fmtDate(s.endDate)}</span>
+        <span class="tag tag-gray">👥 ${(s.responses||[]).length}명</span>
+        <span class="tag tag-primary">🔐 비밀번호 필요</span>
+      </div>
+    </div>
+    <button class="menu-btn" onclick="toggleDropdown(event,'rd_${s.id}')" title="관리">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="dropdown" id="rd_${s.id}">
+      <button class="dropdown-item danger" onclick="mgmtAction(event,'delete','${s.id}')">
+        🗑️ 설문 삭제하기
+      </button>
+    </div>
+  </div>`).join('');
   }
-  if (ended.length) {
-    html += `<div class="section-label" style="margin-top:${active.length?'24px':'4px'}">✅ 종료된 설문</div>`;
-    html += ended.map(s => `
-      <div class="survey-card" onclick="openPwModal('${s.id}')">
-        <div class="survey-card-title">${esc(s.title)}</div>
-        ${s.description ? `<div class="survey-card-desc">${esc(s.description)}</div>` : ''}
-        <div class="survey-card-meta">
-          <span class="tag tag-ended">종료</span>
-          <span class="tag tag-gray">📅 ${fmtDate(s.startDate)}~${fmtDate(s.endDate)}</span>
-          <span class="tag tag-gray">👥 ${(s.responses||[]).length}명</span>
-          <span class="tag tag-primary">🔐 비밀번호 필요</span>
-        </div>
-      </div>`).join('');
+  html += ended.map(s => `
+  <div class="survey-card-wrap">
+    <div class="survey-card" onclick="openPwModal('${s.id}')">
+      <div class="survey-card-title">${esc(s.title)}</div>
+      ${s.description ? `<div class="survey-card-desc">${esc(s.description)}</div>` : ''}
+      <div class="survey-card-meta">
+        <span class="tag tag-ended">종료</span>
+        <span class="tag tag-gray">📅 ${fmtDate(s.startDate)}~${fmtDate(s.endDate)}</span>
+        <span class="tag tag-gray">👥 ${(s.responses||[]).length}명</span>
+        <span class="tag tag-primary">🔐 비밀번호 필요</span>
+      </div>
+    </div>
+    <button class="menu-btn" onclick="toggleDropdown(event,'rd_${s.id}')" title="관리">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="dropdown" id="rd_${s.id}">
+      <button class="dropdown-item danger" onclick="mgmtAction(event,'delete','${s.id}')">
+        🗑️ 설문 삭제하기
+      </button>
+    </div>
+  </div>`).join('');
   }
   if (!active.length && !ended.length) {
     html = `<div class="empty-state"><div class="empty-icon">🕐</div><div class="empty-title">아직 시작되지 않은 설문만 있습니다</div><div class="empty-sub">설문 기간이 시작되면 여기에 표시됩니다</div></div>`;
